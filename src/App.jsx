@@ -1,20 +1,112 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Payment from "./pages/Payment";
+import Profile from "./pages/Profile";
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 const PRODUCTS = [
-  { id: 1, name: "Wireless Pro Headphones", price: 149.99, category: "Electronics", rating: 4.8, reviews: 2341, img: "/images/headphones.png", badge: "Best Seller", desc: "Premium sound with ANC & 40hr battery.", stock: 12 },
-  { id: 2, name: "Minimalist Leather Watch", price: 229.99, category: "Fashion", rating: 4.6, reviews: 876, img: "/images/watch.png", badge: "New", desc: "Italian leather strap, sapphire crystal glass.", stock: 5 },
-  { id: 3, name: "Organic Green Tea Set", price: 34.99, category: "Food", rating: 4.9, reviews: 3120, img: "/images/tea_set.png", badge: "Top Rated", desc: "Premium matcha blend from Uji, Japan.", stock: 50 },
-  { id: 4, name: "Mechanical Keyboard", price: 189.99, category: "Electronics", rating: 4.7, reviews: 1542, img: "/images/keyboard.png", badge: "Hot", desc: "Cherry MX switches, RGB backlit, TKL layout.", stock: 8 },
-  { id: 5, name: "Yoga Mat Premium", price: 59.99, category: "Sports", rating: 4.5, reviews: 654, img: "/images/yoga_mat.png", badge: "", desc: "Non-slip, eco-friendly, 6mm cushioning.", stock: 30 },
-  { id: 6, name: "Cold Brew Coffee Kit", price: 44.99, category: "Food", rating: 4.8, reviews: 987, img: "/images/cold_brew.png", badge: "Trending", desc: "Everything you need for perfect cold brew.", stock: 22 },
-  { id: 7, name: "Smart Fitness Band", price: 79.99, category: "Electronics", rating: 4.4, reviews: 2100, img: "/images/fitness_band.png", badge: "", desc: "Heart rate, SpO2, sleep tracking, 7-day battery.", stock: 18 },
-  { id: 8, name: "Ceramic Planter Set", price: 49.99, category: "Home", rating: 4.7, reviews: 432, img: "/images/planter_set.png", badge: "New", desc: "Set of 3 handcrafted ceramic pots with trays.", stock: 14 },
-  { id: 9, name: "Sunglasses Aviator", price: 119.99, category: "Fashion", rating: 4.5, reviews: 788, img: "/images/sunglasses.png", badge: "", desc: "Polarized UV400 lenses, stainless steel frame.", stock: 20 },
-  { id: 10, name: "Portable Blender", price: 39.99, category: "Home", rating: 4.6, reviews: 1234, img: "/images/blender.png", badge: "Best Seller", desc: "USB-C rechargeable, 6-blade, 350ml capacity.", stock: 35 },
-  { id: 11, name: "Running Shoes X1", price: 134.99, category: "Sports", rating: 4.8, reviews: 3456, img: "/images/shoes.png", badge: "Top Rated", desc: "Lightweight foam sole, breathable mesh upper.", stock: 9 },
-  { id: 12, name: "Scented Candle Set", price: 29.99, category: "Home", rating: 4.9, reviews: 2200, img: "/images/candles.png", badge: "Trending", desc: "Set of 4 soy wax candles, 40hr burn each.", stock: 60 },
+  { id: 1, name: "Wireless Pro Headphones", price: 11999, category: "Electronics", rating: 4.8, reviews: 2341, img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=500", badge: "Best Seller", desc: "Premium sound with ANC & 40hr battery.", stock: 12 },
+  { id: 2, name: "Minimalist Leather Watch", price: 18499, category: "Fashion", rating: 4.6, reviews: 876, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=500", badge: "New", desc: "Italian leather strap, sapphire crystal glass.", stock: 5 },
+  { id: 3, name: "Organic Green Tea Set", price: 2799, category: "Food", rating: 4.9, reviews: 3120, img: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?q=80&w=500", badge: "Top Rated", desc: "Premium matcha blend from Uji, Japan.", stock: 50 },
+  { id: 4, name: "Mechanical Keyboard", price: 15199, category: "Electronics", rating: 4.7, reviews: 1542, img: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?q=80&w=500", badge: "Hot", desc: "Cherry MX switches, RGB backlit, TKL layout.", stock: 8 },
+  { id: 5, name: "Yoga Mat Premium", price: 4799, category: "Sports", rating: 4.5, reviews: 654, img: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?q=80&w=500", badge: "", desc: "Non-slip, eco-friendly, 6mm cushioning.", stock: 30 },
+  { id: 6, name: "Smart Fitness Band", price: 6399, category: "Electronics", rating: 4.4, reviews: 2100, img: "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?q=80&w=500", badge: "", desc: "Heart rate, SpO2, sleep tracking, 7-day battery.", stock: 18 },
+  { id: 7, name: "Ceramic Planter Set", price: 3999, category: "Home", rating: 4.7, reviews: 432, img: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=500", badge: "New", desc: "Set of 3 handcrafted ceramic pots with trays.", stock: 14 },
+  { id: 8, name: "Sunglasses Aviator", price: 9599, category: "Fashion", rating: 4.5, reviews: 788, img: "https://images.unsplash.com/photo-1511499767350-a1590fdb7307?q=80&w=500", badge: "", desc: "Polarized UV400 lenses, stainless steel frame.", stock: 20 },
+  { id: 9, name: "Portable Blender", price: 3199, category: "Home", rating: 4.6, reviews: 1234, img: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?q=80&w=500", badge: "Best Seller", desc: "USB-C rechargeable, 6-blade, 350ml capacity.", stock: 35 },
+  { id: 10, name: "Running Shoes X1", price: 10799, category: "Sports", rating: 4.8, reviews: 3456, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=500", badge: "Top Rated", desc: "Lightweight foam sole, breathable mesh upper.", stock: 9 },
+  { id: 11, name: "Scented Candle Set", price: 2399, category: "Home", rating: 4.9, reviews: 2200, img: "https://images.unsplash.com/photo-1603006905003-be475563bc7f?q=80&w=500", badge: "Trending", desc: "Set of 4 soy wax candles, 40hr burn each.", stock: 60 },
+  { id: 12, name: "4K AI Projector", price: 71999, category: "Electronics", rating: 4.9, reviews: 120, img: "https://images.unsplash.com/photo-1517603957032-1ac53bc162eb?q=80&w=500", badge: "Premium", desc: "Native 4K, AI image scaling, 3000 lumens.", stock: 5 },
+  { id: 13, name: "Designer Silk Scarf", price: 7199, category: "Fashion", rating: 4.7, reviews: 310, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=500", badge: "", desc: "100% mulberry silk, hand-rolled edges.", stock: 15 },
+  { id: 14, name: "Artisanal Coffee Beans", price: 1999, category: "Food", rating: 4.8, reviews: 1500, img: "https://images.unsplash.com/photo-1559056191-7440026e6415?q=80&w=500", badge: "Aromatic", desc: "Single-origin, medium roast from Ethiopia.", stock: 40 },
+  { id: 15, name: "Smart Kettle Pro", price: 5599, category: "Home", rating: 4.6, reviews: 450, img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?q=80&w=500", badge: "Smart", desc: "Wi-Fi control, precise temp, voice sync.", stock: 25 },
+  { id: 16, name: "Adjustable Dumbbells", price: 23999, category: "Sports", rating: 4.7, reviews: 890, img: "https://images.unsplash.com/photo-1586401100318-7ed09772c676?q=80&w=500", badge: "Space Saver", desc: "Replaces 15 sets of weights, 5-52.5 lbs.", stock: 10 },
+  { id: 17, name: "Noise Cancelling Buds", price: 10399, category: "Electronics", rating: 4.5, reviews: 1100, img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=500", badge: "", desc: "True wireless, ambient mode, IPX5 waterproof.", stock: 30 },
+  { id: 18, name: "Merino Wool Sweater", price: 11999, category: "Fashion", rating: 4.8, reviews: 670, img: "https://images.unsplash.com/photo-1556905055-8f358a7a4bb4?q=80&w=500", badge: "Luxury", desc: "Ultra-soft, temperature regulating merino.", stock: 12 },
+  { id: 19, name: "Truffle Oil Infused Kit", price: 4399, category: "Food", rating: 4.9, reviews: 230, img: "https://images.unsplash.com/photo-1508737804141-4c3b688e2546?q=80&w=500", badge: "Gourmet", desc: "Black & white truffle oils with sea salt.", stock: 20 },
+  { id: 20, name: "Air Purifier Elite", price: 15999, category: "Home", rating: 4.7, reviews: 1420, img: "https://images.unsplash.com/photo-1585771724684-252a10684f85?q=80&w=500", badge: "Health", desc: "HEPA 13 filter, quiet mode, PM2.5 sensor.", stock: 18 },
+  { id: 21, name: "Dual Monitor Stand", price: 6399, category: "Electronics", rating: 4.6, reviews: 540, img: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=500", badge: "Workplace", desc: "Gas spring arms, VESA mount, cable mgmt.", stock: 22 },
+  { id: 22, name: "Cashmere Beanie", price: 3599, category: "Fashion", rating: 4.5, reviews: 880, img: "https://images.unsplash.com/photo-1556905055-8f358a7a4bb4?q=80&w=500", badge: "", desc: "100% Inner Mongolian cashmere, ribbed design.", stock: 45 },
+  { id: 23, name: "Dark Chocolate Truffles", price: 1599, category: "Food", rating: 4.9, reviews: 3200, img: "https://images.unsplash.com/photo-1548907040-4baa42d10919?q=80&w=500", badge: "Classic", desc: "72% cocoa, velvet ganache, dusted with cocoa.", stock: 100 },
+  { id: 24, name: "Table Lamp Modern", price: 7199, category: "Home", rating: 4.7, reviews: 432, img: "https://images.unsplash.com/photo-1534073828943-f801091bb18c?q=80&w=500", badge: "Design", desc: "Brushed brass finish, touch control, warm LED.", stock: 14 },
+  { id: 25, name: "Foam Roller Pro", price: 2799, category: "Sports", rating: 4.4, reviews: 654, img: "https://images.unsplash.com/photo-1626084300762-53946c6c13ed?q=80&w=500", badge: "", desc: "High density foam, grid texture for recovery.", stock: 35 },
+  { id: 26, name: "Ergonomic Office Chair", price: 27999, category: "Home", rating: 4.8, reviews: 1200, img: "https://images.unsplash.com/photo-1505797149-43b00fe3ee2c?q=80&w=500", badge: "Premium", desc: "Lumbar support, breathable mesh, 4D armrests.", stock: 8 },
+  { id: 27, name: "Leather Laptop Bag", price: 12799, category: "Fashion", rating: 4.6, reviews: 540, img: "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=500", badge: "Crafted", desc: "Full-grain leather, 15.6 inch laptop sleeve.", stock: 12 },
+  { id: 28, name: "VR Headset X2", price: 39999, category: "Electronics", rating: 4.7, reviews: 310, img: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=500", badge: "Future", desc: "All-in-one VR, spatial audio, 128GB storage.", stock: 10 },
+  { id: 29, name: "Resistance Bands Set", price: 1599, category: "Sports", rating: 4.5, reviews: 2200, img: "https://images.unsplash.com/photo-1598289431512-b97b0917a63e?q=80&w=500", badge: "", desc: "Set of 5 levels, natural latex, carry bag.", stock: 150 },
+  { id: 30, name: "Cold Pressed Olive Oil", price: 2399, category: "Food", rating: 4.9, reviews: 880, img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=500", badge: "Organic", desc: "Extra virgin, early harvest, peppery finish.", stock: 60 },
+  { id: 31, name: "Smart Bulb Kit (4)", price: 3999, category: "Home", rating: 4.6, reviews: 1540, img: "https://images.unsplash.com/photo-1550524513-3170cc681f3d?q=80&w=500", badge: "Smart", desc: "16 million colors, voice control, schedules.", stock: 40 },
+  { id: 32, name: "Gimbal Stabilizer", price: 10399, category: "Electronics", rating: 4.5, reviews: 670, img: "https://images.unsplash.com/photo-1524333865940-2780e9227181?q=80&w=500", badge: "Video", desc: "3-axis stabilization, foldable, active tracking.", stock: 25 },
+  { id: 33, name: "Cotton Bedding Set", price: 7199, category: "Home", rating: 4.7, reviews: 1100, img: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=500", badge: "Comfort", desc: "600 thread count, sateen weave, long-staple cotton.", stock: 20 },
+  { id: 34, name: "Mountain Bike Helmet", price: 4799, category: "Sports", rating: 4.6, reviews: 430, img: "https://images.unsplash.com/photo-1557124816-e9b7d5440de2?q=80&w=500", badge: "Safety", desc: "MIPS technology, lightweight, 21 vents.", stock: 30 },
+  { id: 35, name: "Espresso Machine", price: 47999, category: "Home", rating: 4.8, reviews: 210, img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=500", badge: "Pro", desc: "PID temp control, commercial steam wand.", stock: 6 },
+  { id: 36, name: "Polarized Fishing Glasses", price: 3999, category: "Sports", rating: 4.5, reviews: 890, img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=500", badge: "", desc: "Saltwater safe, UV400, amber lens.", stock: 22 },
+  { id: 37, name: "Smart Scale WiFi", price: 3199, category: "Electronics", rating: 4.4, reviews: 1420, img: "https://images.unsplash.com/photo-1583454110551-21f2fa2adfcd?q=80&w=500", badge: "", desc: "13 body metrics, syncs with health apps.", stock: 50 },
+  { id: 38, name: "Wool Blend Coat", price: 15999, category: "Fashion", rating: 4.7, reviews: 540, img: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?q=80&w=500", badge: "Winter", desc: "Heavyweight wool, tailored fit, satin lining.", stock: 15 },
+  { id: 39, name: "Manuka Honey MGO 400", price: 5199, category: "Food", rating: 4.9, reviews: 670, img: "https://images.unsplash.com/photo-1558611997-d86e0018f6d2?q=80&w=500", badge: "Pure", desc: "Authentic New Zealand honey, high potency.", stock: 25 },
+  { id: 40, name: "Cast Iron Skillet", price: 3599, category: "Home", rating: 4.8, reviews: 3100, img: "https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?q=80&w=500", badge: "Durable", desc: "Pre-seasoned, perfect heat retention.", stock: 40 },
+  { id: 41, name: "Desktop Microphone", price: 7999, category: "Electronics", rating: 4.6, reviews: 880, img: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=500", badge: "Studio", desc: "USB condenser, quad polar patterns.", stock: 18 },
+  { id: 42, name: "Yoga Bolster", price: 3199, category: "Sports", rating: 4.7, reviews: 310, img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=500", badge: "", desc: "Organic cotton cover, buckwheat hull filling.", stock: 20 },
+  { id: 43, name: "Leather Chelsea Boots", price: 13599, category: "Fashion", rating: 4.6, reviews: 654, img: "https://images.unsplash.com/photo-1542288960-f6ad327d3745?q=80&w=500", badge: "", desc: "Full-grain leather, Goodyear welted.", stock: 12 },
+  { id: 44, name: "Organic Almond Butter", price: 1199, category: "Food", rating: 4.8, reviews: 1540, img: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?q=80&w=500", badge: "Vegan", desc: "Dry roasted, no added sugar or oil.", stock: 80 },
+  { id: 45, name: "Robotic Vacuum Pro", price: 31999, category: "Home", rating: 4.6, reviews: 890, img: "https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=500", badge: "AI", desc: "Lidar mapping, self-emptying base.", stock: 5 },
+  { id: 46, name: "Graphing Calculator", price: 9599, category: "Electronics", rating: 4.5, reviews: 432, img: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=500", badge: "", desc: "Color screen, CAS functionality, rechargeable.", stock: 30 },
+  { id: 47, name: "Swimming Goggles Pro", price: 2399, category: "Sports", rating: 4.5, reviews: 670, img: "https://images.unsplash.com/photo-1559136555-930d7bc9e322?q=80&w=500", badge: "", desc: "Anti-fog, mirrored lens, wide view.", stock: 50 },
+  { id: 48, name: "Cashmere Scarf", price: 6399, category: "Fashion", rating: 4.8, reviews: 310, img: "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?q=80&w=500", badge: "Elegant", desc: "2-ply cashmere, ultra warm and soft.", stock: 20 },
+  { id: 49, name: "Matcha Whisk Set", price: 1999, category: "Food", rating: 4.9, reviews: 1200, img: "https://images.unsplash.com/photo-1515696955266-4f67e13219e8?q=80&w=500", badge: "Zen", desc: "Bamboo whisk, scoop, and ceramic bowl.", stock: 45 },
+  { id: 50, name: "Smart Door Lock", price: 14399, category: "Home", rating: 4.7, reviews: 540, img: "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=500", badge: "Secure", desc: "Fingerprint, PIN, and app entry.", stock: 14 },
+  { id: 51, name: "External SSD 1TB", price: 8799, category: "Electronics", rating: 4.8, reviews: 2200, img: "https://images.unsplash.com/photo-1597740985671-2a8a3b80ed00?q=80&w=500", badge: "Fast", desc: "NVMe speeds, rugged aluminum case.", stock: 40 },
+  { id: 52, name: "Canvas Tote Bag", price: 2399, category: "Fashion", rating: 4.4, reviews: 1540, img: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=500", badge: "Eco", desc: "Heavy canvas, internal pockets, reinforced handles.", stock: 100 },
+  { id: 53, name: "Quinoa Puffs Snack", price: 799, category: "Food", rating: 4.5, reviews: 880, img: "https://images.unsplash.com/photo-1551462147-3a8877bc9443?q=80&w=500", badge: "", desc: "Aged cheddar flavor, high protein, gf.", stock: 200 },
+  { id: 54, name: "Aromatherapy Diffuser", price: 3599, category: "Home", rating: 4.6, reviews: 670, img: "https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=500", badge: "Relax", desc: "Ultrasonic, wood grain, 7 light colors.", stock: 35 },
+  { id: 55, name: "Tennis Racket Elite", price: 17599, category: "Sports", rating: 4.7, reviews: 230, img: "https://images.unsplash.com/photo-1617083275226-64606730a16c?q=80&w=500", badge: "Pro", desc: "Graphene 360+ tech, balanced control.", stock: 10 },
+  { id: 56, name: "Webcam 4K Pro", price: 12799, category: "Electronics", rating: 4.6, reviews: 1420, img: "https://images.unsplash.com/photo-1588600036348-81861347071f?q=80&w=500", badge: "HDR", desc: "RightLight 3, dual mics, 90 deg field.", stock: 25 },
+  { id: 57, name: "Linen Shirt", price: 4799, category: "Fashion", rating: 4.6, reviews: 890, img: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=500", badge: "Summer", desc: "100% European flax, garment dyed.", stock: 30 },
+  { id: 58, name: "Balsamic Glaze 250ml", price: 1599, category: "Food", rating: 4.8, reviews: 310, img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=500", badge: "Rich", desc: "Modena PGI, thick and sweet reduction.", stock: 50 },
+  { id: 59, name: "Electric Toothbrush", price: 7199, category: "Home", rating: 4.7, reviews: 1100, img: "https://images.unsplash.com/photo-1559613663-712617631cc1?q=80&w=500", badge: "", desc: "Pressure sensor, 3 modes, smart timer.", stock: 40 },
+  { id: 60, name: "Jump Rope Speed", price: 1199, category: "Sports", rating: 4.5, reviews: 2200, img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=500", badge: "", desc: "Ball bearing swivel, steel wire cable.", stock: 120 },
+  { id: 61, name: "Monitor Light Bar", price: 5599, category: "Electronics", rating: 4.7, reviews: 432, img: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=500", badge: "Eye Care", desc: "Asymmetric lighting, auto-dimming.", stock: 20 },
+  { id: 62, name: "Denim Jacket Classic", price: 7999, category: "Fashion", rating: 4.5, reviews: 1540, img: "https://images.unsplash.com/photo-1527010154944-f2241763d806?q=80&w=500", badge: "", desc: "14oz raw denim, antique hardware.", stock: 25 },
+  { id: 63, name: "Greek Olive Mix", price: 999, category: "Food", rating: 4.7, reviews: 880, img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=500", badge: "", desc: "Kalamata & Green olives infused with herbs.", stock: 60 },
+  { id: 64, name: "Memory Foam Pillow", price: 4399, category: "Home", rating: 4.6, reviews: 670, img: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?q=80&w=500", badge: "", desc: "Cooling gel layer, orthopedic support.", stock: 30 },
+  { id: 65, name: "Camping Stove Ultra", price: 3599, category: "Sports", rating: 4.6, reviews: 310, img: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=500", badge: "Trek", desc: "Pocket-sized, wind-resistant, high output.", stock: 45 },
+  { id: 66, name: "Power Bank 20Ah", price: 3999, category: "Electronics", rating: 4.8, reviews: 3100, img: "https://images.unsplash.com/photo-1619131649622-c32274472d80?q=80&w=500", badge: "Max", desc: "65W PD, charges laptops and phones.", stock: 50 },
+  { id: 67, name: "Silk Pillowcase", price: 2799, category: "Home", rating: 4.8, reviews: 1420, img: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=500", badge: "Beauty", desc: "22 Momme silk, hair and skin benefits.", stock: 40 },
+  { id: 68, name: "Leather Belt Heritage", price: 3999, category: "Fashion", rating: 4.7, reviews: 654, img: "https://images.unsplash.com/photo-1614165936126-2ed18e471b1b?q=80&w=500", badge: "", desc: "Vegetable tanned, solid brass buckle.", stock: 35 },
+  { id: 69, name: "Dark Roast Cold Brew", price: 299, category: "Food", rating: 4.6, reviews: 1540, img: "https://images.unsplash.com/photo-1559056191-7440026e6415?q=80&w=500", badge: "", desc: "Nitro-infused, zero sugar, dairy-free.", stock: 100 },
+  { id: 70, name: "Kitchen Scale Digital", price: 1599, category: "Home", rating: 4.5, reviews: 890, img: "https://images.unsplash.com/photo-1506484334402-466986b1f01a?q=80&w=500", badge: "Kitchen", desc: "Precise sensors, LCD display, tare function.", stock: 60 },
+  { id: 71, name: "Bike Frame Bag", price: 3199, category: "Sports", rating: 4.4, reviews: 432, img: "https://images.unsplash.com/photo-1501147830916-ce44a6359892?q=80&w=500", badge: "", desc: "Waterproof, easy install, 2L capacity.", stock: 25 },
+  { id: 72, name: "USB-C Hub (7-in-1)", price: 3199, category: "Electronics", rating: 4.6, reviews: 1100, img: "https://images.unsplash.com/photo-1586210579191-33b45e38fa2c?q=80&w=500", badge: "Work", desc: "4K HDMI, SD Reader, 100W PD.", stock: 30 },
+  { id: 73, name: "Cotton Chinos", price: 3999, category: "Fashion", rating: 4.5, reviews: 880, img: "https://images.unsplash.com/photo-1473966968600-fa804b86d30b?q=80&w=500", badge: "", desc: "Slim fit, stretch cotton twill.", stock: 40 },
+  { id: 74, name: "Avocado Oil 500ml", price: 1199, category: "Food", rating: 4.8, reviews: 540, img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=500", badge: "Healthy", desc: "High smoke point, 100% pure.", stock: 50 },
+  { id: 75, name: "Wine Aerator Elite", price: 1999, category: "Home", rating: 4.7, reviews: 310, img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=500", badge: "", desc: "Instant aeration, no-drip stand.", stock: 30 },
+  { id: 76, name: "Golf Balls (12pk)", price: 3599, category: "Sports", rating: 4.8, reviews: 670, img: "https://images.unsplash.com/photo-1531694611353-d4758f86fa6d?q=80&w=500", badge: "Pro", desc: "High launch, low spin for driver distance.", stock: 50 },
+  { id: 77, name: "Trackball Mouse", price: 6399, category: "Electronics", rating: 4.6, reviews: 432, img: "https://images.unsplash.com/photo-1527864550417-7fd91e984f93?q=80&w=500", badge: "Ergo", desc: "Adjustable angle, dual connectivity.", stock: 15 },
+  { id: 78, name: "Beanie Ribbed Knit", price: 1599, category: "Fashion", rating: 4.4, reviews: 1540, img: "https://images.unsplash.com/photo-1556905055-8f358a7a4bb4?q=80&w=500", badge: "", desc: "Soft acrylic blend, fold-up cuff.", stock: 80 },
+  { id: 79, name: "Stevia Drops Liquid", price: 999, category: "Food", rating: 4.6, reviews: 880, img: "https://images.unsplash.com/photo-1558611997-d86e0018f6d2?q=80&w=500", badge: "Keto", desc: "Zero calorie sweetener, vanilla flavor.", stock: 100 },
+  { id: 80, name: "Storage Bins (3)", price: 2399, category: "Home", rating: 4.7, reviews: 1420, img: "https://images.unsplash.com/photo-1591129841117-3adfd313e34f?q=80&w=500", badge: "", desc: "Stackable, clear lids, woven texture.", stock: 60 },
+  { id: 81, name: "Ski Goggles HD", price: 7199, category: "Sports", rating: 4.6, reviews: 310, img: "https://images.unsplash.com/photo-1452626212852-811d58933cae?q=80&w=500", badge: "Winter", desc: "Dual layer lens, OTG compatible.", stock: 20 },
+  { id: 82, name: "Keyboard Wrist Rest", price: 1999, category: "Electronics", rating: 4.5, reviews: 670, img: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?q=80&w=500", badge: "", desc: "Memory foam, non-slip base.", stock: 35 },
+  { id: 83, name: "Linen Bedding", price: 11999, category: "Home", rating: 4.8, reviews: 210, img: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=500", badge: "Lux", desc: "Premium French flax linen, pre-washed.", stock: 10 },
+  { id: 84, name: "Polar Fleece Vest", price: 3199, category: "Fashion", rating: 4.5, reviews: 890, img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=500", badge: "", desc: "Lightweight, zip-up, moisture wicking.", stock: 40 },
+  { id: 85, name: "Himalayan Pink Salt", price: 599, category: "Food", rating: 4.9, reviews: 3100, img: "https://images.unsplash.com/photo-1504309325066-88d44747716f?q=80&w=500", badge: "Pure", desc: "Coarse grain, mineral rich salt.", stock: 150 },
+  { id: 86, name: "Electric Milk Frother", price: 1599, category: "Home", rating: 4.6, reviews: 1540, img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?q=80&w=500", badge: "Latte", desc: "Handheld, stainless whisk, dual speed.", stock: 80 },
+  { id: 87, name: "Bicycle U-Lock", price: 3999, category: "Sports", rating: 4.7, reviews: 654, img: "https://images.unsplash.com/photo-1501147830916-ce44a6359892?q=80&w=500", badge: "Security", desc: "16mm hardened steel, double deadbolt.", stock: 30 },
+  { id: 88, name: "Soundbar Compact", price: 10399, category: "Electronics", rating: 4.5, reviews: 880, img: "https://images.unsplash.com/photo-1545454675-3531b543be5d?q=80&w=500", badge: "TV", desc: "2.1 Channel, built-in subwoofer, Bluetooth.", stock: 25 },
+  { id: 89, name: "Silk Eye Mask", price: 1199, category: "Home", rating: 4.7, reviews: 1100, img: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=500", badge: "Sleep", desc: "Pure silk, light blocking, adjustable strap.", stock: 50 },
+  { id: 90, name: "Suede Sneakers", price: 7199, category: "Fashion", rating: 4.6, reviews: 540, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=500", badge: "", desc: "Italian suede, cupsole construction.", stock: 18 },
+  { id: 91, name: "Organic Coconut Water", price: 249, category: "Food", rating: 4.8, reviews: 2200, img: "https://images.unsplash.com/photo-1551462147-3a8877bc9443?q=80&w=500", badge: "Hydrate", desc: "Single source, no pulp, unsweetened.", stock: 200 },
+  { id: 92, name: "Non-Stick Frying Pan", price: 2799, category: "Home", rating: 4.5, reviews: 670, img: "https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?q=80&w=500", badge: "", desc: "Ceramic coating, PFOA free, induction base.", stock: 45 },
+  { id: 93, name: "Diving Fins Pro", price: 5599, category: "Sports", rating: 4.6, reviews: 230, img: "https://images.unsplash.com/photo-1559136555-930d7bc9e322?q=80&w=500", badge: "Pool", desc: "Adjustable strap, high thrust design.", stock: 20 },
+  { id: 94, name: "Smart Plug (2pk)", price: 1999, category: "Electronics", rating: 4.7, reviews: 1420, img: "https://images.unsplash.com/photo-1550524513-3170cc681f3d?q=80&w=500", badge: "Smart", desc: "Energy monitoring, away mode, app control.", stock: 60 },
+  { id: 95, name: "Wool Socks (3pk)", price: 2399, category: "Fashion", rating: 4.8, reviews: 890, img: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?q=80&w=500", badge: "Warm", desc: "Merino wool blend, cushioned heel.", stock: 100 },
+  { id: 96, name: "Pesto Genovese", price: 559, category: "Food", rating: 4.7, reviews: 432, img: "https://images.unsplash.com/photo-1546549032-951fd4f16b60?q=80&w=500", badge: "Fresh", desc: "Basil, pine nuts, parmigiano reggiano.", stock: 80 },
+  { id: 97, name: "Air Fryer XL", price: 10399, category: "Home", rating: 4.8, reviews: 1100, img: "https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=500", badge: "Hot", desc: "5.8qt capacity, digital touch presets.", stock: 15 },
+  { id: 98, name: "Climbing Shoes Pro", price: 11199, category: "Sports", rating: 4.7, reviews: 540, img: "https://images.unsplash.com/photo-1522158633578-96400d72e453?q=80&w=500", badge: "Peak", desc: "Aggressive downturn, sticky rubber sole.", stock: 12 },
+  { id: 99, name: "Portable SSD 500GB", price: 5599, category: "Electronics", rating: 4.6, reviews: 880, img: "https://images.unsplash.com/photo-1597740985671-2a8a3b80ed00?q=80&w=500", badge: "", desc: "Pocket-sized, USB 3.2, drop resistant.", stock: 40 },
+  { id: 100, name: "Cotton Hand Towels", price: 1599, category: "Home", rating: 4.5, reviews: 670, img: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=500", badge: "Soft", desc: "Set of 4, highly absorbent, combed cotton.", stock: 150 },
 ];
 
 const CATEGORIES = ["All", "Electronics", "Fashion", "Food", "Sports", "Home"];
@@ -61,6 +153,7 @@ export default function App() {
   const [cart, setCart] = useLocalStorage("shopai-cart-v2", []);
   const [wishlist, setWishlist] = useLocalStorage("shopai-wishlist-v2", []);
   const [isDarkMode, setIsDarkMode] = useLocalStorage("shopai-theme-v2", false);
+  const [user, setUser] = useLocalStorage("shopai-user", null);
   
   const [category, setCategory] = useState("All");
   const [search, setSearch] = useState("");
@@ -68,7 +161,7 @@ export default function App() {
   const [aiOpen, setAiOpen] = useState(false);
   const [notification, setNotification] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [priceRange, setPriceRange] = useState(300);
+  const [priceRange, setPriceRange] = useState(80000);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [imgLoaded, setImgLoaded] = useState({});
 
@@ -169,6 +262,11 @@ export default function App() {
                 {p === "cart" ? `🛒 ${cartCount > 0 ? `(${cartCount})` : "Cart"}` : p === "stack" ? "🛠️ Architecture" : "🏠 Store"}
               </button>
             ))}
+            {user ? (
+              <button onClick={() => setPage("profile")} style={{ ...s.navBtn, ...(page === "profile" ? s.navBtnActive : {}) }}>👤 {user.name}</button>
+            ) : (
+              <button onClick={() => setPage("login")} style={{ ...s.navBtn, ...(page === "login" ? s.navBtnActive : {}) }}>🔑 Login</button>
+            )}
             <button onClick={() => setIsDarkMode(!isDarkMode)} style={s.themeToggle}>{isDarkMode ? "☀️ Light" : "🌙 Dark"}</button>
           </div>
           <button style={s.aiBtn} onClick={() => setAiOpen(o => !o)}>🤖 AI Chat</button>
@@ -231,7 +329,7 @@ export default function App() {
               </div>
               <div style={s.catRow}>
                 {CATEGORIES.map(c => <button key={c} onClick={() => setCategory(c)} style={{ ...s.catBtn, ...(category === c ? s.catBtnActive : {}) }}>{c}</button>)}
-                <div style={s.priceFilter}><span>Max: ${priceRange}</span><input type="range" min={20} max={300} value={priceRange} onChange={e => setPriceRange(+e.target.value)} style={s.range} /></div>
+                <div style={s.priceFilter}><span>Max: ₹{priceRange}</span><input type="range" min={500} max={80000} value={priceRange} onChange={e => setPriceRange(+e.target.value)} style={s.range} /></div>
               </div>
             </div>
 
@@ -247,7 +345,7 @@ export default function App() {
                   </div>
                   <div style={s.cardCat}>{p.category}</div>
                   <div style={s.cardName}>{p.name}</div>
-                  <div style={s.cardBottom}><div style={s.cardPrice}>${p.price}</div><button style={s.addBtn} onClick={e => { e.stopPropagation(); addToCart(p); }}>+ Cart</button></div>
+                  <div style={s.cardBottom}><div style={s.cardPrice}>₹{p.price}</div><button style={s.addBtn} onClick={e => { e.stopPropagation(); addToCart(p); }}>+ Cart</button></div>
                 </motion.div>
               ))}
             </div>
@@ -280,21 +378,58 @@ export default function App() {
                 <div style={s.cartItems}>{cart.map(item => (
                   <div key={item.id} style={s.cartItem}>
                     <img src={item.img} alt="" style={s.cartItemImg} />
-                    <div style={s.cartItemInfo}><div>{item.name}</div><div style={{ color: t.primary, fontWeight: 900 }}>${item.price}</div></div>
+                    <div style={s.cartItemInfo}><div>{item.name}</div><div style={{ color: t.primary, fontWeight: 900 }}>₹{item.price}</div></div>
                     <div style={s.qtyControl}><button onClick={() => updateQty(item.id, -1)}>−</button><span>{item.qty}</span><button onClick={() => updateQty(item.id, 1)}>+</button></div>
                     <button onClick={() => removeFromCart(item.id)} style={s.removeBtn}>🗑️</button>
                   </div>
                 ))}</div>
                 <div style={s.cartSummary}>
-                  <div style={s.summaryRow}><span>Subtotal</span><span>${cartTotal.toFixed(2)}</span></div>
-                  <div style={s.summaryRow}><span>Tax</span><span>${(cartTotal * 0.08).toFixed(2)}</span></div>
+                  <div style={s.summaryRow}><span>Subtotal</span><span>₹{cartTotal.toFixed(2)}</span></div>
+                  <div style={s.summaryRow}><span>Tax</span><span>₹{(cartTotal * 0.08).toFixed(2)}</span></div>
                   <div style={{ ...s.summaryRow, borderTop: `1px solid ${t.border}`, marginTop: 16, paddingTop: 16, fontWeight: 900, color: t.textPrimary, fontSize: 20 }}>
-                    <span>Total</span><span>${(cartTotal * 1.08).toFixed(2)}</span></div>
-                  <button style={s.checkoutBtn} onClick={() => notify("🎉 Order Confirmed!")}>Pay Now</button>
+                    <span>Total</span><span>₹{(cartTotal * 1.08).toFixed(2)}</span></div>
+                  <button style={s.checkoutBtn} onClick={() => setPage("payment")}>Checkout</button>
                 </div>
               </div>
             )}
           </motion.div>
+        )}
+
+        {page === "payment" && (
+          <Payment 
+            cart={cart} 
+            total={cartTotal} 
+            theme={t} 
+            onPaymentComplete={() => {
+              setCart([]);
+              setPage("home");
+              notify("🚀 Payment successful! Your order is being processed by AI bots.");
+            }} 
+          />
+        )}
+
+        {page === "login" && (
+          <Login 
+            theme={t} 
+            onLogin={(u) => { setUser(u); setPage("home"); notify(`👋 Welcome back, ${u.name}!`); }} 
+            onSwitchToSignup={() => setPage("signup")} 
+          />
+        )}
+
+        {page === "signup" && (
+          <Signup 
+            theme={t} 
+            onSignup={(u) => { setUser(u); setPage("home"); notify(`🎉 Account created! Welcome, ${u.name}!`); }} 
+            onSwitchToLogin={() => setPage("login")} 
+          />
+        )}
+
+        {page === "profile" && (
+          <Profile 
+            user={user} 
+            theme={t} 
+            onLogout={() => { setUser(null); setPage("home"); notify("👋 Logged out successfully."); }} 
+          />
         )}
       </main>
 
@@ -340,7 +475,7 @@ export default function App() {
                 <p style={{ fontSize: 14, marginTop: 4 }}>"Customers love the <strong>ergonomic design</strong> and <strong>premium feel</strong> of this item. Highly recommended for daily use!"</p>
               </div>
               <p style={{ color: t.textSecondary, lineHeight: 1.6, marginBottom: 24 }}>{selectedProduct.desc}</p>
-              <div style={{ fontSize: 32, fontWeight: 900, marginBottom: 24 }}>${selectedProduct.price}</div>
+              <div style={{ fontSize: 32, fontWeight: 900, marginBottom: 24 }}>₹{selectedProduct.price}</div>
               <button style={{ ...s.heroBtnPrimary, width: "100%" }} onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); }}>Add to Cart</button>
             </motion.div>
           </motion.div>
